@@ -1,12 +1,19 @@
 Package: CloBalGame
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Tools for computing the closest balanced game in Cooperative Game Theory
+Version: 0.5
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    person(given = "Pedro", 
+           family = "Garcia Segador", 
+           email = "pgsegador@gmail.com", 
+           role = c("aut", "cre"))
+Description: Calculates the closest balanced game (with a non-empty core) for cooperative games and offers basic utilities for handling cooperative games.
+License: GPL-3
 Encoding: UTF-8
+LazyData: true
+Imports:
+    MASS,
+    CoopGame,
+    quadprog
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 URL: https://github.com/pgsegador/CloBalGame
