@@ -30,14 +30,14 @@ In such cases, searching for the closest balanced game becomes a natural approac
 In other words, it solves the following optimization problem:
 
 $$
-\min_{v^*,\, x^*} \sum_{S} \gamma_S\, (v(S) - v^*(S))^2
+\min_{v^*, \ x^*} \sum_{S} \gamma_S  (v(S) - v^*(S))^2.
 $$
 
 subject to the following constraints:
 
-- **Efficiency:**$\sum_{i \in N} x^*_i = v^*(N)$
+- **Efficiency:** $\sum_{i \in N} x^*_i = v^*(N),$
 
-- **Coalitional Rationality:** $\sum_{i \in S} x^*_i \ge v^*(S) \quad \text{for all } S \subsetneq N$
+- **Coalitional Rationality:** $\sum_{i \in S} x^*_i \ge v^*(S), \ \forall S \subsetneq N.$
 
 Optionally, the following constraints can also be enforced:
 
