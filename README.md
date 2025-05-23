@@ -36,17 +36,10 @@ $$
 
 subject to the following constraints:
 
-- **Efficiency:**
-
-$$
-\sum_{i \in N} x^*_i = v^*(N)
-$$
+- **Efficiency:** $\sum_{i \in N} x^*_i = v^*(N)$
 
 - **Coalitional Rationality:**
-
-$$
-\sum_{i \in S} x^*_i \ge v^*(S) \quad \text{for all } S \subsetneq N
-$$
+  $\sum_{i \in S} x^*_i \ge v^*(S) \quad \text{for all } S \subsetneq N$
 
 Optionally, the following constraints can also be enforced:
 
