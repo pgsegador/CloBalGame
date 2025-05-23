@@ -74,6 +74,10 @@ install.packages("CloBalGame_0.5.tar.gz", repos = NULL, type = "source")
 
 After installation, load the package with:
 
+``` r
+library(CloBalGame)
+```
+
 ## Example 1: Closest balanced game for a game with 4 players
 
 Suppose we have measured the value of each coalition in a cooperative

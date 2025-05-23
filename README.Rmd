@@ -68,7 +68,7 @@ install.packages("CloBalGame_0.5.tar.gz", repos = NULL, type = "source")
 
 After installation, load the package with:
 
-```{r, echo=FALSE}
+```{r}
 library(CloBalGame)
 ```
 
