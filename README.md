@@ -1,0 +1,76 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# CloBalGame
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+**CloBalGame** is an R package for computing the *closest balanced game*
+to a given TU game. It helps find a game as close as possible (in a
+weighted Euclidean sense) to the original one, while satisfying the
+conditions of balancedness.
+
+Sometimes, the value of a cooperative game $v$ is obtained through an
+estimation procedure or expert judgment. Suppose the players agree that
+it is beneficial for them to collaborate and form the grand coalition.
+If the game has a non-empty core, any core imputation provides a
+reasonable way to distribute the total gain among the players.
+
+However, if the core is empty, this might indicate that the estimation
+of the game was flawed, since an empty core suggests that forming the
+grand coalition is not stable (some subcoalitions may have an incentive
+to act independently).
+
+In such cases, searching for the closest balanced game becomes a natural
+approach. It allows us to adjust the game slightly in order to ensure a
+non-empty core, while remaining as close as possible to the original
+game in a weighted Euclidean sense.
+
+In other words, it solves the following optimization problem:
+
+$$
+\min_{v^*,\, x^*} \sum_{S} \gamma_S\, (v(S) - v^*(S))^2
+$$
+
+subject to the following constraints:
+
+- **Efficiency:**
+
+$$
+\sum_{i \in N} x^*_i = v^*(N)
+$$
+
+- **Coalitional Rationality:**
+
+$$
+\sum_{i \in S} x^*_i \ge v^*(S) \quad \text{for all } S \subsetneq N
+$$
+
+Optionally, the following constraints can also be enforced:
+
+- $v^*(S) \ge 0$ for all coalitions (`positive_game`).
+- $v^*(N) = v_N$, to fix the value of the grand coalition (`vN`). By
+  default, this value is set to match the original game, $v_N = v(N)$.
+
+## Installation
+
+You can install the development version of `CloBalGame` directly from
+GitHub using:
+
+``` r
+# Install devtools if needed
+# install.packages("devtools")
+
+devtools::install_github("pgsegador/CloBalGame")
+#> Using GitHub PAT from the git credential store.
+#> Skipping install of 'CloBalGame' from a github remote, the SHA1 (e2352d9d) has not changed since last install.
+#>   Use `force = TRUE` to force installation
+```
+
+``` r
+library(CloBalGame)
+## basic example code
+```
+
+## Example

@@ -121,7 +121,7 @@ closest_balanced_game_iter <- function(
     } else if (!is.null(vN) && positive_game){
 
       # 0) Quadratic terms
-      Dmat <- 2 * t(B_sub) %*% diag(g_sub) %*% B_sub + diag(epsilon, n)  # regularización
+      Dmat <- 2 * t(B_sub) %*% diag(g_sub ,nrow = length(g_sub),ncol = length(g_sub)) %*% B_sub + diag(epsilon, n)  # regularización
       dvec <- 2 * t(B_sub) %*% (g_sub * v_sub)  # linear
 
       # 1) Efficiency constraint: x(N) = v(N)
@@ -144,7 +144,7 @@ closest_balanced_game_iter <- function(
     } else if (is.null(vN) && positive_game){
 
       # 0) Quadratic terms
-      Dmat <- 2 * t(B_sub) %*% diag(g_sub) %*% B_sub + diag(epsilon, n)  # regularización
+      Dmat <- 2 * t(B_sub) %*% diag(g_sub ,nrow = length(g_sub),ncol = length(g_sub)) %*% B_sub + diag(epsilon, n)  # regularización
       dvec <- 2 * t(B_sub) %*% (g_sub * v_sub)  # linear
 
       # 1) Non-negativity constraints: x_i ≥ 0

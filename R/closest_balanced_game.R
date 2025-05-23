@@ -42,12 +42,30 @@
 #'   \item \code{'quad'}: formulates and solves a quadratic program enforcing efficiency and optional positivity. The \code{"quad"} (quadratic programming) method does not suffer from infinite loops and always provides a result. However, it is not recommended for large games (\eqn{n > 10}) due to poor computational efficiency.
 #' }
 #'
+#' @references
+#' P. Garcia-Segador, M. Grabisch, & P. Miranda. (2025). On the Set of Balanced Games. Mathematics of Operations Research.
+#'
+#' @seealso \code{\link{closest_balanced_game_quad}}, \code{\link{closest_balanced_game_iter}}
+#'
 #' @examples
+#' # Example 1
+#'
 #' v <- c(4,2,1,5,6,3,4)
 #' # Iterative method (default)
-#' closest_balanced_game(v, method = 'iter')
-#' # Quadratic method with positivity
-#' closest_balanced_game(v, method = 'quad', positive_game = TRUE)
+#' colbal <- closest_balanced_game(v, method = 'iter')
+#' print(clobal)
+#'
+#' # Example 2
+#'
+#' v <- CoopGame::apexGameVector(n=3,apexPlayer=2)
+#'
+#' # It is balanced?
+#' CoopGame::isBalancedGame(v)
+#'
+#'
+#' # Get Closest Balanced Game with positivity
+#' clobal <- closest_balanced_game(v, method = 'quad', positive_game = TRUE)
+#' print(clobal)
 #'
 #' @importFrom MASS ginv
 #' @importFrom quadprog solve.QP
