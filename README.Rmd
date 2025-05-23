@@ -13,12 +13,13 @@ knitr::opts_chunk$set(
 )
 ```
 
+
 # CloBalGame
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-**CloBalGame** is an R package for computing the *closest balanced game* to a given TU game. It helps find a game as close as possible (in a weighted Euclidean sense) to the original one, while satisfying the conditions of balancedness.
+**CloBalGame** is an R package for computing the *closest balanced game* to a given TU game. It helps find a game as close as possible (in a weighted Euclidean sense) to the original one, while satisfying the conditions of balancedness. This package is compatible with other R packages for cooperative game theory, such as *CoopGame*.
 
 Sometimes, the value of a cooperative game $v$ is obtained through an estimation procedure or expert judgment. Suppose the players agree that it is beneficial for them to collaborate and form the grand coalition. If the game has a non-empty core, any core imputation provides a reasonable way to distribute the total gain among the players.
 
@@ -55,16 +56,233 @@ Optionally, the following constraints can also be enforced:
 
 You can install the development version of `CloBalGame` directly from GitHub using:
 
-```{r}
+```{r, eval = FALSE}
 # Install devtools if needed
 # install.packages("devtools")
 
 devtools::install_github("pgsegador/CloBalGame")
 ```
 
-```{r example}
-library(CloBalGame)
-## basic example code
+Alternatively, you can install the package manually:
+
+- Download the .tar.gz source file from the GitHub releases or build it locally using devtools::build().
+
+- Install it with:
+
+```{r, eval = FALSE}
+# Replace with your actual file path
+install.packages("CloBalGame_0.1.0.tar.gz", repos = NULL, type = "source")
 ```
 
-## Example
+After installation, load the package with:
+
+```{r, echo=FALSE}
+library(CloBalGame)
+```
+
+## Example 1: Closest balanced game for a game with 4 players
+
+Suppose we have measured the value of each coalition in a cooperative game with 4 players, and obtained the following values:
+
+```{r, include=FALSE}
+v <- c(
+   9.72, -3.74, -4.14, -9.90, -1.27,
+   7.51, -7.80, 6.74, -5.06, 1.15,
+  -0.03, -9.89, -2.68, 5.28, 2.14
+)
+```
+
+If we want to display the coalitions as names of the game vector, we can do the following:
+
+```{r}
+v <- set_label_game(v)
+print(v)
+```
+
+Let's check that the game is not balanced and, therefore, that there is no core imputation that benefits all coalitions.
+
+```{r}
+CoopGame::isBalancedGame(v)
+```
+
+We will now search for the closest balanced game. For small games ($n \leq 5$), it is recommended to use the quadratic method (`method = "quad"`):
+
+```{r}
+clobal <- closest_balanced_game(v,method='quad')
+print(clobal)
+```
+
+The function returns the closest game `v_star` and a core imputation `x_star` for it.
+
+We can also verify that this game `v_star` has a unique core and that `x_star` is the core element.
+
+```{r}
+core <- CoopGame::coreVertices(clobal$v_star)
+print(core)
+```
+
+The function also allows computing the closest **positive balanced game** using the `positive_game` parameter.
+
+```{r}
+clobal_pos <- closest_balanced_game(v,positive_game=TRUE, method='quad')
+print(clobal_pos)
+```
+
+Moreover, suppose the value $v(N)$ of the grand coalition is approximate and we do not want to impose that $v^*(N) = v(N)$. In that case, we can call the function with `vN = NULL`, and the optimization will allow $v^*(N)$ to vary freely.
+
+```{r}
+clobal_free <- closest_balanced_game(v,vN=NULL, method='quad')
+print(clobal_free)
+```
+
+In the following table, we compare the values of these games:
+
+```{r results='asis', echo=FALSE}
+library(knitr)
+
+# Original game vector
+v <- c(9.72, -3.74, -4.14, -9.90, -1.27,
+       7.51, -7.80, 6.74, -5.06, 1.15,
+       -0.03, -9.89, -2.68, 5.28, 2.14)
+
+# Compute balanced games using different settings
+sol1 <- closest_balanced_game(v, method = "quad")
+sol2 <- closest_balanced_game(v, method = "quad", positive_game = TRUE)
+sol3 <- closest_balanced_game(v, method = "quad", vN = NULL)
+
+# Extract v* (balanced game vectors)
+v_star <- sol1$v_star
+v_star_pos <- sol2$v_star
+v_star_free <- sol3$v_star
+
+# Create a comparison table
+comparison <- data.frame(
+  Coalition = get_index_set(4),
+  v = round(v,2),
+  v_star = round(v_star, 2),
+  v_star_pos = round(v_star_pos, 2),
+  v_star_free = round(v_star_free, 2)
+)
+
+kable(comparison, caption = "Comparison of different versions of the closest balanced game")
+```
+We can observe that `v_star_pos` has all positive entries, and that the value $v^*(N)$ associated with `v_star_free` does **not** match the original $v(N)$, as it has been freely optimized without that constraint.
+
+
+## Example 2: Closest balanced game for a game with 8 players
+
+Now, let's consider a larger game with $n = 8$ players. We are going to work with a distance metric based on the **Shapley value**:
+
+$$\gamma_S = \frac{1}{\binom{n-2}{|S|-1}}.$$
+
+```{r, include= FALSE}
+n=8
+gamma <- get_shapley_gamma(n)
+```
+
+When the number of players is large, the option `method = "quad"` becomes inefficient. Instead, we suggest using the **iterative method** with `method = "iter"`. This method has the downside that it may occasionally get stuck in loops without converging to a solution. As the number of players $n$ increases, it becomes less likely for the algorithm to get stuck in a loop. This is related to the fact that the probability that the core of $v^*$ is a singleton converges to one as $n$ increases.
+
+```{r}
+set.seed(123)  # Set seed for reproducibility
+
+# Number of players in the game
+n <- 8
+
+# Simulation range for the values of the game (cube side)
+l <- 10
+
+# Decimal rounding parameter
+round_par <- 2
+
+# Compute the Shapley metric weight vector
+gamma <- get_shapley_gamma(n)
+
+# Whether to enforce the balanced game to be positive
+positive_game <- FALSE
+
+# Generate a random cooperative game with values in [-l, l]
+len <- 2^n - 1
+v <- 2 * l * runif(len) - l
+v <- round(v, round_par)  # Round to the desired number of decimals
+
+# Compute the closest balanced game using the iterative method
+clobal <- closest_balanced_game(v, gamma=gamma, method = 'iter')
+# print x_Star
+print(clobal$x_star)
+# Extract the core of the resulting balanced game v_star
+core <- CoopGame::coreVertices(clobal$v_star)
+print(core)
+```
+
+We can see that the core allocation of $v^*$ coincides with the only element of its core.
+
+Although as this game has many players examining all the values of $v$ and $v^*$ may be too costly it is always good to remember that all $v^*$ information is stored in $x^*$. Indeed,
+
+$$v^*(S)=\min \{ x^*(S) , v(S) \}.$$
+
+```{r}
+tol <- 10^(-8)
+dif <- abs(pmin(allocation2Game(clobal$x_star),v)-clobal$v_star)>tol
+print(any(dif)) # no differences
+```
+
+We can also compute the **Shapley value** for both the original game `v` and the balanced approximation `v_star`:
+
+```{r}
+shap_v <- CoopGame::shapleyValue(v)
+print(shap_v)
+shap_v_star <- CoopGame::shapleyValue(clobal$v_star)
+print(shap_v_star)
+```
+
+In the following table we can compare the distributions associated with the Shapley value of $v$, $v^*$ and the single core imputation of $v^*$.
+
+```{r , echo=FALSE}
+# Create a comparison table
+comparison <- data.frame(
+  Player = c(1:n),
+  Shapley_v = shap_v,
+  Shapley_v_star = shap_v_star,
+  x_star = clobal$x_star
+)
+
+kable(comparison, caption = "Comparison of different allocations")
+```
+We can see that the shapley value of $v$ and $v^*$ coincide in the previous table.
+
+We know that if the gammas are those associated with the Shapley value then the partition that solves the following problem is precisely the Shapley value:
+
+$$
+\begin{aligned}
+& \min_{x \in \mathbb{R}^{n}} && \sum_{S \subseteq N} \gamma_S \left( v(S) - x(S) \right)^2, \\
+& \text{s.a.} && x(N) = v(N).
+\end{aligned}
+$$
+
+We can also compute the partitions that minimize other types of metrics such as the Euclidean metric with the function **get_psi_allocation**:
+
+```{r}
+# Euclidean distance, gamma=1
+gamma <- rep(1,length(v))
+psi_v <- get_psi_allocation(v,gamma=gamma)
+print(psi_v)
+clobal_euclidean <- closest_balanced_game(v, gamma=gamma, method = 'iter')
+# print x_star
+print(clobal_euclidean$x_star)
+# psi_value of v_star
+psi_v_star <- get_psi_allocation(clobal_euclidean$v_star,gamma=gamma)
+print(psi_v_star)
+```
+In the same way we can compare these values when changing metrics:
+
+```{r , echo=FALSE}
+# Create a comparison table
+comparison <- data.frame(
+  Player = c(1:n),
+  Psi_v = psi_v,
+  Psi_v_star = psi_v_star,
+  x_star = clobal_euclidean$x_star
+)
+
+kable(comparison, caption = "Comparison of different allocations with Euclidean distance")
+```
