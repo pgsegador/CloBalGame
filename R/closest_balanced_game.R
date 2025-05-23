@@ -52,7 +52,7 @@
 #'
 #' v <- c(4,2,1,5,6,3,4)
 #' # Iterative method (default)
-#' colbal <- closest_balanced_game(v, method = 'iter')
+#' clobal <- closest_balanced_game(v, method = 'iter')
 #' print(clobal)
 #'
 #' # Example 2
@@ -61,7 +61,6 @@
 #'
 #' # It is balanced?
 #' CoopGame::isBalancedGame(v)
-#'
 #'
 #' # Get Closest Balanced Game with positivity
 #' clobal <- closest_balanced_game(v, method = 'quad', positive_game = TRUE)
