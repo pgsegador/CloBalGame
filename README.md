@@ -245,7 +245,7 @@ Although as this game has many players examining all the values of $v$
 and $v^{\ast}$ may be too costly it is always good to remember that all
 $v^{\ast}$ information is stored in $x^{\ast}$. Indeed,
 
-$$v^{\ast}(S)=\min \{ x^{\ast}(S) , v(S) \}.$$
+$v^{\ast}(S) = \min \lbrace x^{\ast}(S),\ v(S) \rbrace .$
 
 ``` r
 tol <- 10^(-8)
