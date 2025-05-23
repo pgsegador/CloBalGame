@@ -68,7 +68,7 @@ Alternatively, you can install the package manually:
 
 ``` r
 # Replace with your actual file path
-install.packages("CloBalGame_0.1.0.tar.gz", repos = NULL, type = "source")
+install.packages("CloBalGame_0.5.tar.gz", repos = NULL, type = "source")
 ```
 
 After installation, load the package with:
