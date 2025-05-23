@@ -31,21 +31,22 @@ game in a weighted Euclidean sense.
 In other words, it solves the following optimization problem:
 
 $$
-\min_{v^*, \ x^*} \sum_{S} \gamma_S  (v(S) - v^*(S))^2.
+\min_{v^{\ast}, \ x^{\ast}} \sum_{S\subseteq N} \gamma_S  (v(S) - v^{\ast}(S))^2.
 $$
 
 subject to the following constraints:
 
-- **Efficiency:** $\sum_{i \in N} x^*_i = v^*(N),$
+- **Efficiency:** $\sum_{i \in N} x^{\ast}_i = v^{\ast}(N),$
 
 - **Coalitional Rationality:**
-  $\sum_{i \in S} x^*_i \ge v^*(S), \ \forall S \subsetneq N.$
+  $\sum_{i \in S} x^{\ast}_i \ge v^{\ast}(S), \ \forall S \subsetneq N.$
 
 Optionally, the following constraints can also be enforced:
 
-- $v^*(S) \ge 0$ for all coalitions (`positive_game`).
-- $v^*(N) = v_N$, to fix the value of the grand coalition (`vN`). By
-  default, this value is set to match the original game, $v_N = v(N)$.
+- $v^{\ast}(S) \ge 0$ for all coalitions (`positive_game`).
+- $v^{\ast}(N) = v_N$, to fix the value of the grand coalition (`vN`).
+  By default, this value is set to match the original game,
+  $v_N = v(N)$.
 
 ## Installation
 
@@ -140,9 +141,9 @@ print(clobal_pos)
 ```
 
 Moreover, suppose the value $v(N)$ of the grand coalition is approximate
-and we do not want to impose that $v^*(N) = v(N)$. In that case, we can
-call the function with `vN = NULL`, and the optimization will allow
-$v^*(N)$ to vary freely.
+and we do not want to impose that $v^{\ast}(N) = v(N)$. In that case, we
+can call the function with `vN = NULL`, and the optimization will allow
+$v^{\ast}(N)$ to vary freely.
 
 ``` r
 clobal_free <- closest_balanced_game(v,vN=NULL, method='quad')
@@ -179,7 +180,7 @@ In the following table, we compare the values of these games:
 Comparison of different versions of the closest balanced game
 
 We can observe that `v_star_pos` has all positive entries, and that the
-value $v^*(N)$ associated with `v_star_free` does **not** match the
+value $v^{\ast}(N)$ associated with `v_star_free` does **not** match the
 original $v(N)$, as it has been freely optimized without that
 constraint.
 
@@ -196,8 +197,8 @@ with `method = "iter"`. This method has the downside that it may
 occasionally get stuck in loops without converging to a solution. As the
 number of players $n$ increases, it becomes less likely for the
 algorithm to get stuck in a loop. This is related to the fact that the
-probability that the core of $v^*$ is a singleton converges to one as
-$n$ increases.
+probability that the core of $v^{\ast}$ is a singleton converges to one
+as $n$ increases.
 
 ``` r
 set.seed(123)  # Set seed for reproducibility
@@ -237,14 +238,14 @@ print(core)
 #> [1,] 0.9998223
 ```
 
-We can see that the core allocation of $v^*$ coincides with the only
-element of its core.
+We can see that the core allocation of $v^{\ast}$ coincides with the
+only element of its core.
 
 Although as this game has many players examining all the values of $v$
-and $v^*$ may be too costly it is always good to remember that all $v^*$
-information is stored in $x^*$. Indeed,
+and $v^{\ast}$ may be too costly it is always good to remember that all
+$v^{\ast}$ information is stored in $x^{\ast}$. Indeed,
 
-$$v^*(S)=\min \{ x^*(S) , v(S) \}.$$
+$$v^{\ast}(S)=\min \{ x^{\ast}(S) , v(S) \}.$$
 
 ``` r
 tol <- 10^(-8)
@@ -268,7 +269,8 @@ print(shap_v_star)
 ```
 
 In the following table we can compare the distributions associated with
-the Shapley value of $v$, $v^*$ and the single core imputation of $v^*$.
+the Shapley value of $v$, $v^{\ast}$ and the single core imputation of
+$v^{\ast}$.
 
 | Player |  Shapley_v | Shapley_v_star |     x_star |
 |-------:|-----------:|---------------:|-----------:|
