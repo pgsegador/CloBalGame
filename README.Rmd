@@ -76,7 +76,7 @@ library(CloBalGame)
 
 Suppose we have measured the value of each coalition in a cooperative game with 4 players, and obtained the following values:
 
-```{r, include=FALSE}
+```{r}
 v <- c(
    9.72, -3.74, -4.14, -9.90, -1.27,
    7.51, -7.80, 6.74, -5.06, 1.15,

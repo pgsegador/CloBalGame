@@ -83,6 +83,14 @@ library(CloBalGame)
 Suppose we have measured the value of each coalition in a cooperative
 game with 4 players, and obtained the following values:
 
+``` r
+v <- c(
+   9.72, -3.74, -4.14, -9.90, -1.27,
+   7.51, -7.80, 6.74, -5.06, 1.15,
+  -0.03, -9.89, -2.68, 5.28, 2.14
+)
+```
+
 If we want to display the coalitions as names of the game vector, we can
 do the following:
 
